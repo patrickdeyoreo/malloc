@@ -19,7 +19,7 @@ void *naive_malloc(size_t size)
 	unsigned char *chunk = NULL;
 	size_t unused_size = 0;
 	size_t chunk_index = 0;
-	size_t page_size = 0;
+	long page_size = 0;
 
 	if (n_chunks)
 	{
@@ -29,7 +29,7 @@ void *naive_malloc(size_t size)
 	}
 	else
 	{
-		page_size = getpagesize();
+		page_size = sysconf(_SC_PAGESIZE);
 		start = sbrk(0);
 		errno = 0;
 		if (sbrk(page_size) == (void *) -1 && errno == ENOMEM)
