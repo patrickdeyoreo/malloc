@@ -14,14 +14,34 @@
  */
 void *naive_malloc(size_t size)
 {
-	void *start = sbrk(0);
+	static void *start;
+	static size_t n_chunks;
+	unsigned char *chunk = NULL;
+	size_t unused_size = 0;
+	size_t chunk_index = 0;
+	size_t page_size = 0;
 
-	errno = 0;
-	if (sbrk(size + sizeof(size_t)) == (void *) -1 && errno == ENOMEM)
+	if (n_chunks)
 	{
-		error(0, errno, NULL);
-		return (NULL);
+		for (chunk = start; chunk_index < n_chunks; ++chunk_index)
+			chunk += *((size_t *)chunk);
+		unused_size = *((size_t *)chunk);
 	}
-	*((size_t *) start) = size;
-	return (start + sizeof(size_t));
+	else
+	{
+		page_size = getpagesize();
+		start = sbrk(0);
+		errno = 0;
+		if (sbrk(page_size) == (void *) -1 && errno == ENOMEM)
+		{
+			error(0, ENOMEM, NULL);
+			return (NULL);
+		}
+		chunk = start;
+		unused_size = page_size;
+	}
+	n_chunks += 1;
+	*((size_t *)chunk) = size;
+	*((size_t *)chunk + size) = unused_size - size;
+	return (chunk + sizeof(size_t));
 }
