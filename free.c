@@ -12,11 +12,14 @@
 void _free(void *ptr)
 {
 	chunk_header_t *header = NULL;
+	size_t size = 0;
 
-	if (!ptr)
-		return;
-	header = (char *) ptr - sizeof(*header);
-	CHUNK_UNSET_USED(header);
-	((chunk_header_t *) ((char *) ptr + CHUNK_SIZE(header)))->prev =
-		CHUNK_SIZE(header);
+	if (ptr)
+	{
+		header = (chunk_header_t *) (char *) ptr - sizeof(*header);
+		CHUNK_SET_FREE(header);
+		size = CHUNK_GET_SIZE(header);
+		header = (chunk_header_t *) ((char *) header + size);
+		CHUNK_SET_PREV(header, size);
+	}
 }

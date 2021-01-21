@@ -4,12 +4,15 @@
 #include <stddef.h>
 
 #define ALIGNMENT sizeof(void *)
-#define PADDING(size) (-(size) & (ALIGNMENT - 1))
-#define CHUNK_SIZE(chunk_header_ptr) ((chunk_header_ptr)->size & ~1UL)
-#define CHUNK_USED(chunk_header_ptr) ((chunk_header_ptr)->size & 1)
-#define CHUNK_SET_USED(chunk_header_ptr) ((chunk_header_ptr)->size |= 1)
-#define CHUNK_UNSET_USED(chunk_header_ptr) ((chunk_header_ptr)->size &= ~1UL)
-#define CHUNK_TOGGLE_USED(chunk_header_ptr) ((chunk_header_ptr)->size ^= 1)
+#define PADDING(n) (-(n) & (ALIGNMENT - 1))
+#define CHUNK_GET_SIZE(p) ((p)->size & ~1UL)
+#define CHUNK_GET_PREV(p) ((p)->prev)
+#define CHUNK_GET_USED(p) ((p)->size & 1)
+#define CHUNK_GET_FREE(p) ((p)->size & 1 ^ 1)
+#define CHUNK_SET_SIZE(p, n) ((p)->size = (n) | ((p)->size & 1))
+#define CHUNK_SET_PREV(p, n) ((p)->prev = (n))
+#define CHUNK_SET_USED(p) ((p)->size |= 1)
+#define CHUNK_SET_FREE(p) ((p)->size &= ~1UL)
 
 /**
  * struct chunk_header_s - malloc chunk header
@@ -19,7 +22,7 @@
  */
 typedef struct chunk_header_s
 {
-	size_t prev_size;
+	size_t prev;
 	size_t size;
 } chunk_header_t;
 
