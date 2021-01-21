@@ -58,6 +58,7 @@ void *naive_malloc(size_t size)
 	{
 		chunk = start = sbrk(0);
 	}
+	size += PADDING(size);
 	if (remaining < size + 2 * sizeof(size_t))
 		chunk = _naive_malloc_sbrk(size, chunk, remaining);
 	if (!chunk)
