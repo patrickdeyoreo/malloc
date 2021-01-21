@@ -8,8 +8,8 @@
 /**
  * _malloc_sbrk - extend the program break to allocate memory
  *
- * @size: size to allocate
- * @chunk: pointer to the start of the chunk
+ * @needed: number of bytes needed for requested memory, padding and header
+ * @chunk: pointer to the start of the unused chunk
  * @unused: number of unused allocated bytes
  *
  * Return: If memory allocation fails, return NULL.
@@ -38,7 +38,7 @@ static void *_malloc_sbrk(size_t needed, void *chunk, size_t unused)
 /**
  * _malloc - dynamically allocate heap memory
  *
- * @size: size to allocate
+ * @size: number of bytes to allocate
  *
  * Return: If memory allocation fails, return NULL.
  * Otherwise, return a pointer to the start of the allocated memory region.
