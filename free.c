@@ -16,7 +16,7 @@ void _free(void *ptr)
 
 	if (ptr)
 	{
-		header = (chunk_header_t *) (char *) ptr - sizeof(*header);
+		header = (chunk_header_t *) ((char *) ptr - sizeof(*header));
 		CHUNK_SET_FREE(header);
 		size = CHUNK_GET_SIZE(header);
 		header = (chunk_header_t *) ((char *) header + size);
